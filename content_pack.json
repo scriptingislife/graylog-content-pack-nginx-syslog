@@ -1,0 +1,237 @@
+{
+  "v": 1,
+  "id": "48f10c1d-e1b2-4561-8191-d64915765ca7",
+  "rev": 1,
+  "name": "nginx-syslog",
+  "summary": "This content pack supports the NGINX syslog feature. It only requires modification of the nginx.conf file.",
+  "description": "This content pack supports the NGINX syslog feature. It only requires modification of the nginx.conf file. There are no bells and whistles. The goal is to start logging as quickly as possible.",
+  "vendor": "Nathaniel B <nathaniel@scriptingis.life>",
+  "url": "https://github.com/scriptingislife/graylog-content-pack-nginx-syslog",
+  "parameters": [],
+  "entities": [
+    {
+      "v": "1",
+      "type": {
+        "name": "input",
+        "version": "1"
+      },
+      "id": "3fda71d6-deed-4797-a34b-d5441c1c162a",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "nginx-syslog"
+        },
+        "configuration": {
+          "expand_structured_data": {
+            "@type": "boolean",
+            "@value": false
+          },
+          "recv_buffer_size": {
+            "@type": "integer",
+            "@value": 262144
+          },
+          "port": {
+            "@type": "integer",
+            "@value": 12401
+          },
+          "number_worker_threads": {
+            "@type": "integer",
+            "@value": 4
+          },
+          "force_rdns": {
+            "@type": "boolean",
+            "@value": false
+          },
+          "allow_override_date": {
+            "@type": "boolean",
+            "@value": true
+          },
+          "bind_address": {
+            "@type": "string",
+            "@value": "0.0.0.0"
+          },
+          "store_full_message": {
+            "@type": "boolean",
+            "@value": true
+          }
+        },
+        "static_fields": {},
+        "type": {
+          "@type": "string",
+          "@value": "org.graylog2.inputs.syslog.udp.SyslogUDPInput"
+        },
+        "global": {
+          "@type": "boolean",
+          "@value": true
+        },
+        "extractors": [
+          {
+            "target_field": {
+              "@type": "string",
+              "@value": ""
+            },
+            "condition_value": {
+              "@type": "string",
+              "@value": "^\\{"
+            },
+            "order": {
+              "@type": "integer",
+              "@value": 1
+            },
+            "converters": [],
+            "configuration": {
+              "flatten": {
+                "@type": "boolean",
+                "@value": true
+              },
+              "list_separator": {
+                "@type": "string",
+                "@value": ", "
+              },
+              "kv_separator": {
+                "@type": "string",
+                "@value": "="
+              },
+              "key_prefix": {
+                "@type": "string",
+                "@value": ""
+              },
+              "key_separator": {
+                "@type": "string",
+                "@value": "_"
+              },
+              "replace_key_whitespace": {
+                "@type": "boolean",
+                "@value": false
+              },
+              "key_whitespace_replacement": {
+                "@type": "string",
+                "@value": "_"
+              }
+            },
+            "source_field": {
+              "@type": "string",
+              "@value": "message_json"
+            },
+            "title": {
+              "@type": "string",
+              "@value": "Extract JSON fields from message"
+            },
+            "type": {
+              "@type": "string",
+              "@value": "JSON"
+            },
+            "cursor_strategy": {
+              "@type": "string",
+              "@value": "COPY"
+            },
+            "condition_type": {
+              "@type": "string",
+              "@value": "REGEX"
+            }
+          },
+          {
+            "target_field": {
+              "@type": "string",
+              "@value": "message"
+            },
+            "condition_value": {
+              "@type": "string",
+              "@value": "^\\{"
+            },
+            "order": {
+              "@type": "integer",
+              "@value": 2
+            },
+            "converters": [],
+            "configuration": {
+              "regex": {
+                "@type": "string",
+                "@value": ".*request\\\": \\\"(.*?)\\\".*"
+              },
+              "replacement": {
+                "@type": "string",
+                "@value": "$1"
+              },
+              "replace_all": {
+                "@type": "boolean",
+                "@value": false
+              }
+            },
+            "source_field": {
+              "@type": "string",
+              "@value": "message_json"
+            },
+            "title": {
+              "@type": "string",
+              "@value": "Shorten message as path"
+            },
+            "type": {
+              "@type": "string",
+              "@value": "REGEX_REPLACE"
+            },
+            "cursor_strategy": {
+              "@type": "string",
+              "@value": "COPY"
+            },
+            "condition_type": {
+              "@type": "string",
+              "@value": "REGEX"
+            }
+          },
+          {
+            "target_field": {
+              "@type": "string",
+              "@value": "message_json"
+            },
+            "condition_value": {
+              "@type": "string",
+              "@value": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])\\snginx:\\s\\{"
+            },
+            "order": {
+              "@type": "integer",
+              "@value": 0
+            },
+            "converters": [],
+            "configuration": {
+              "replacement": {
+                "@type": "string",
+                "@value": "{"
+              },
+              "regex": {
+                "@type": "string",
+                "@value": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])\\snginx:\\s\\{"
+              }
+            },
+            "source_field": {
+              "@type": "string",
+              "@value": "message"
+            },
+            "title": {
+              "@type": "string",
+              "@value": "nginx syslog to pure json"
+            },
+            "type": {
+              "@type": "string",
+              "@value": "REGEX_REPLACE"
+            },
+            "cursor_strategy": {
+              "@type": "string",
+              "@value": "COPY"
+            },
+            "condition_type": {
+              "@type": "string",
+              "@value": "REGEX"
+            }
+          }
+        ]
+      },
+      "constraints": [
+        {
+          "type": "server-version",
+          "version": ">=4.2.3+553fadb"
+        }
+      ]
+    }
+  ]
+}
