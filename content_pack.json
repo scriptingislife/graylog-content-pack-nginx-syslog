@@ -1,7 +1,7 @@
 {
-  "v": 1,
+  "v": "1",
   "id": "48f10c1d-e1b2-4561-8191-d64915765ca7",
-  "rev": 1,
+  "rev": 2,
   "name": "nginx-syslog",
   "summary": "This content pack supports the NGINX syslog feature. It only requires modification of the nginx.conf file.",
   "description": "This content pack supports the NGINX syslog feature. It only requires modification of the nginx.conf file. There are no bells and whistles. The goal is to start logging as quickly as possible.",
