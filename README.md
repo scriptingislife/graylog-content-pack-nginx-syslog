@@ -4,6 +4,9 @@ This content pack supports the NGINX syslog feature. It only requires modificati
 
 To create this content pack I modified the [nginx + Docker](https://marketplace.graylog.org/addons/d81a73dd-79bf-4a1f-bb76-89e9a3df6b11) content pack by modifying the extractors and `nginx.conf` file and removing all other Graylog components like dashboards.
 
+More details can be found in my blog post [NGINX Logs to Graylog - Quick and Dirty](https://scriptingis.life/NGINX-Syslog-Graylog/).
+
+
 # Setup
 Install NGINX and replace the `Logging Settings` section in `/etc/nginx/nginx.conf` with the lines below. Replace `logging.example.com` with the domain or IP address of your Graylog server.
 
