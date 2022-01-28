@@ -11,7 +11,7 @@ More details can be found in my blog post [NGINX Logs to Graylog - Quick and Dir
 Install NGINX and replace the `Logging Settings` section in `/etc/nginx/nginx.conf` with the lines below. Replace `logging.example.com` with the domain or IP address of your Graylog server.
 
 ```
-log_format graylog_json escape=json '{ "timestamp": "$time_iso8601", '
+log_format graylog_json escape=json '{ "nginx_timestamp": "$time_iso8601", '
         '"remote_addr": "$remote_addr", '
         '"connection": "$connection", '
         '"connection_requests": $connection_requests, '

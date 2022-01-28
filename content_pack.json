@@ -1,7 +1,7 @@
 {
   "v": "1",
   "id": "48f10c1d-e1b2-4561-8191-d64915765ca7",
-  "rev": 2,
+  "rev": 3,
   "name": "nginx-syslog",
   "summary": "This content pack supports the NGINX syslog feature. It only requires modification of the nginx.conf file.",
   "description": "This content pack supports the NGINX syslog feature. It only requires modification of the nginx.conf file. There are no bells and whistles. The goal is to start logging as quickly as possible.",
@@ -15,7 +15,7 @@
         "name": "input",
         "version": "1"
       },
-      "id": "3fda71d6-deed-4797-a34b-d5441c1c162a",
+      "id": "4dbef822-0555-4b66-b9c2-ab787d596205",
       "data": {
         "title": {
           "@type": "string",
@@ -141,7 +141,7 @@
             },
             "order": {
               "@type": "integer",
-              "@value": 2
+              "@value": 3
             },
             "converters": [],
             "configuration": {
@@ -223,13 +223,62 @@
               "@type": "string",
               "@value": "REGEX"
             }
+          },
+          {
+            "target_field": {
+              "@type": "string",
+              "@value": "timestamp"
+            },
+            "condition_value": {
+              "@type": "string",
+              "@value": ""
+            },
+            "order": {
+              "@type": "integer",
+              "@value": 2
+            },
+            "converters": [
+              {
+                "type": {
+                  "@type": "string",
+                  "@value": "FLEXDATE"
+                },
+                "configuration": {
+                  "time_zone": {
+                    "@type": "string",
+                    "@value": "Etc/UTC"
+                  }
+                }
+              }
+            ],
+            "configuration": {},
+            "source_field": {
+              "@type": "string",
+              "@value": "nginx_timestamp"
+            },
+            "title": {
+              "@type": "string",
+              "@value": "Copy nginx_timestamp to timestamp"
+            },
+            "type": {
+              "@type": "string",
+              "@value": "COPY_INPUT"
+            },
+            "cursor_strategy": {
+              "@type": "string",
+              "@value": "COPY"
+            },
+            "condition_type": {
+              "@type": "string",
+              "@value": "NONE"
+            }
           }
         ]
       },
       "constraints": [
         {
           "type": "server-version",
-          "version": ">=4.2.3+553fadb"
+          "version": ">=4.2.5+59802bf"
         }
       ]
     }
