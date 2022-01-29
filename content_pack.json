@@ -1,7 +1,7 @@
 {
   "v": "1",
   "id": "48f10c1d-e1b2-4561-8191-d64915765ca7",
-  "rev": 3,
+  "rev": 4,
   "name": "nginx-syslog",
   "summary": "This content pack supports the NGINX syslog feature. It only requires modification of the nginx.conf file.",
   "description": "This content pack supports the NGINX syslog feature. It only requires modification of the nginx.conf file. There are no bells and whistles. The goal is to start logging as quickly as possible.",
@@ -15,7 +15,7 @@
         "name": "input",
         "version": "1"
       },
-      "id": "4dbef822-0555-4b66-b9c2-ab787d596205",
+      "id": "dc46034b-da90-4ccf-9f3c-6ab050b43771",
       "data": {
         "title": {
           "@type": "string",
@@ -55,7 +55,12 @@
             "@value": true
           }
         },
-        "static_fields": {},
+        "static_fields": {
+          "from_nginx": {
+            "@type": "string",
+            "@value": "true"
+          }
+        },
         "type": {
           "@type": "string",
           "@value": "org.graylog2.inputs.syslog.udp.SyslogUDPInput"
@@ -64,216 +69,220 @@
           "@type": "boolean",
           "@value": true
         },
-        "extractors": [
+        "extractors": []
+      },
+      "constraints": [
+        {
+          "type": "server-version",
+          "version": ">=4.2.5+59802bf"
+        }
+      ]
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "pipeline",
+        "version": "1"
+      },
+      "id": "5ba3b6ce-dc14-4310-ac5c-2f8776f5593d",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "NGINX JSON Processing"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Convert NGINX JSON to message fields"
+        },
+        "source": {
+          "@type": "string",
+          "@value": "pipeline \"NGINX JSON Processing\"\nstage 0 match all\nrule \"nginx Syslog to JSON string\"\nstage 1 match all\nrule \"Extract JSON fields from message_json\"\nstage 2 match all\nrule \"Parse nginx timestamp\"\nstage 3 match all\nrule \"Shorten message field to nginx request\"\nend"
+        },
+        "connected_streams": [
           {
-            "target_field": {
-              "@type": "string",
-              "@value": ""
-            },
-            "condition_value": {
-              "@type": "string",
-              "@value": "^\\{"
-            },
-            "order": {
-              "@type": "integer",
-              "@value": 1
-            },
-            "converters": [],
-            "configuration": {
-              "flatten": {
-                "@type": "boolean",
-                "@value": true
-              },
-              "list_separator": {
-                "@type": "string",
-                "@value": ", "
-              },
-              "kv_separator": {
-                "@type": "string",
-                "@value": "="
-              },
-              "key_prefix": {
-                "@type": "string",
-                "@value": ""
-              },
-              "key_separator": {
-                "@type": "string",
-                "@value": "_"
-              },
-              "replace_key_whitespace": {
-                "@type": "boolean",
-                "@value": false
-              },
-              "key_whitespace_replacement": {
-                "@type": "string",
-                "@value": "_"
-              }
-            },
-            "source_field": {
-              "@type": "string",
-              "@value": "message_json"
-            },
-            "title": {
-              "@type": "string",
-              "@value": "Extract JSON fields from message"
-            },
-            "type": {
-              "@type": "string",
-              "@value": "JSON"
-            },
-            "cursor_strategy": {
-              "@type": "string",
-              "@value": "COPY"
-            },
-            "condition_type": {
-              "@type": "string",
-              "@value": "REGEX"
-            }
-          },
-          {
-            "target_field": {
-              "@type": "string",
-              "@value": "message"
-            },
-            "condition_value": {
-              "@type": "string",
-              "@value": "^\\{"
-            },
-            "order": {
-              "@type": "integer",
-              "@value": 3
-            },
-            "converters": [],
-            "configuration": {
-              "regex": {
-                "@type": "string",
-                "@value": ".*request\\\": \\\"(.*?)\\\".*"
-              },
-              "replacement": {
-                "@type": "string",
-                "@value": "$1"
-              },
-              "replace_all": {
-                "@type": "boolean",
-                "@value": false
-              }
-            },
-            "source_field": {
-              "@type": "string",
-              "@value": "message_json"
-            },
-            "title": {
-              "@type": "string",
-              "@value": "Shorten message as path"
-            },
-            "type": {
-              "@type": "string",
-              "@value": "REGEX_REPLACE"
-            },
-            "cursor_strategy": {
-              "@type": "string",
-              "@value": "COPY"
-            },
-            "condition_type": {
-              "@type": "string",
-              "@value": "REGEX"
-            }
-          },
-          {
-            "target_field": {
-              "@type": "string",
-              "@value": "message_json"
-            },
-            "condition_value": {
-              "@type": "string",
-              "@value": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])\\snginx:\\s\\{"
-            },
-            "order": {
-              "@type": "integer",
-              "@value": 0
-            },
-            "converters": [],
-            "configuration": {
-              "replacement": {
-                "@type": "string",
-                "@value": "{"
-              },
-              "regex": {
-                "@type": "string",
-                "@value": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])\\snginx:\\s\\{"
-              }
-            },
-            "source_field": {
-              "@type": "string",
-              "@value": "message"
-            },
-            "title": {
-              "@type": "string",
-              "@value": "nginx syslog to pure json"
-            },
-            "type": {
-              "@type": "string",
-              "@value": "REGEX_REPLACE"
-            },
-            "cursor_strategy": {
-              "@type": "string",
-              "@value": "COPY"
-            },
-            "condition_type": {
-              "@type": "string",
-              "@value": "REGEX"
-            }
-          },
-          {
-            "target_field": {
-              "@type": "string",
-              "@value": "timestamp"
-            },
-            "condition_value": {
-              "@type": "string",
-              "@value": ""
-            },
-            "order": {
-              "@type": "integer",
-              "@value": 2
-            },
-            "converters": [
-              {
-                "type": {
-                  "@type": "string",
-                  "@value": "FLEXDATE"
-                },
-                "configuration": {
-                  "time_zone": {
-                    "@type": "string",
-                    "@value": "Etc/UTC"
-                  }
-                }
-              }
-            ],
-            "configuration": {},
-            "source_field": {
-              "@type": "string",
-              "@value": "nginx_timestamp"
-            },
-            "title": {
-              "@type": "string",
-              "@value": "Copy nginx_timestamp to timestamp"
-            },
-            "type": {
-              "@type": "string",
-              "@value": "COPY_INPUT"
-            },
-            "cursor_strategy": {
-              "@type": "string",
-              "@value": "COPY"
-            },
-            "condition_type": {
-              "@type": "string",
-              "@value": "NONE"
-            }
+            "@type": "string",
+            "@value": "000000000000000000000001"
           }
         ]
+      },
+      "constraints": [
+        {
+          "type": "server-version",
+          "version": ">=4.2.5+59802bf"
+        }
+      ]
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "pipeline_rule",
+        "version": "1"
+      },
+      "id": "6409bc3b-3d29-4ce2-bf47-5bb6b141c870",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "Parse nginx timestamp"
+        },
+        "description": {
+          "@type": "string",
+          "@value": ""
+        },
+        "source": {
+          "@type": "string",
+          "@value": "rule \"Parse nginx timestamp\"\nwhen\nhas_field(\"nginx_timestamp\")\nthen\n// Rewrite timestamp field from parsed field nginx_timestamp\nlet timestamp = parse_date(to_string($message.nginx_timestamp), \"yyyy-MM-dd'T'HH:mm:ssZZ\");\nset_field(\"timestamp\", timestamp);\n// Remove fields that are no longer needed.\nremove_field(\"nginx_timestamp\");\nend"
+        }
+      },
+      "constraints": [
+        {
+          "type": "server-version",
+          "version": ">=4.2.5+59802bf"
+        }
+      ]
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "pipeline_rule",
+        "version": "1"
+      },
+      "id": "4ecc4ea9-f283-4de5-9d9b-5d5266bfae6e",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "Shorten message field to nginx request"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Rewrites the message field to only the HTTP request for readability."
+        },
+        "source": {
+          "@type": "string",
+          "@value": "rule \"Shorten message field to nginx request\"\nwhen\nhas_field(\"message_json\")\nthen\n// Rewrite message field to only the request for readability\nset_field(\"message\", $message.request);\n// Remove fields that are no longer needed.\nremove_field(\"message_json\");\nend"
+        }
+      },
+      "constraints": [
+        {
+          "type": "server-version",
+          "version": ">=4.2.5+59802bf"
+        }
+      ]
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "pipeline_rule",
+        "version": "1"
+      },
+      "id": "b90d357a-95ff-475f-b971-e030e5c7fb56",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "nginx Syslog to JSON string"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Converts the nginx Syslog message to a JSON string in the field message_json."
+        },
+        "source": {
+          "@type": "string",
+          "@value": "rule \"nginx Syslog to JSON string\"\nwhen\n    regex(\".+ nginx: \\\\{\", to_string($message.message)).matches == true\nthen\n    let message_json = regex_replace(\"(.+ nginx: \\\\{)\", to_string($message.message), \"{\");\n    set_field(\"message_json\", message_json);\nend"
+        }
+      },
+      "constraints": [
+        {
+          "type": "server-version",
+          "version": ">=4.2.5+59802bf"
+        }
+      ]
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "pipeline_rule",
+        "version": "1"
+      },
+      "id": "c6b7299c-1149-4524-9851-daea7b9cb008",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "Extract JSON fields from message_json"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Sets fields from JSON field message_json"
+        },
+        "source": {
+          "@type": "string",
+          "@value": "rule \"Extract JSON fields from message_json\"\nwhen\nhas_field(\"message_json\")\nthen\n// Extract fields from json\nset_fields(to_map(parse_json(to_string($message.message_json))));\nend"
+        }
+      },
+      "constraints": [
+        {
+          "type": "server-version",
+          "version": ">=4.2.5+59802bf"
+        }
+      ]
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "stream",
+        "version": "1"
+      },
+      "id": "0cfc49df-ad54-48eb-ae91-18b64cb8510f",
+      "data": {
+        "alarm_callbacks": [],
+        "outputs": [],
+        "remove_matches": {
+          "@type": "boolean",
+          "@value": false
+        },
+        "title": {
+          "@type": "string",
+          "@value": "NGINX Access Logs"
+        },
+        "stream_rules": [
+          {
+            "type": {
+              "@type": "string",
+              "@value": "EXACT"
+            },
+            "field": {
+              "@type": "string",
+              "@value": "from_nginx"
+            },
+            "value": {
+              "@type": "string",
+              "@value": "true"
+            },
+            "inverted": {
+              "@type": "boolean",
+              "@value": false
+            },
+            "description": {
+              "@type": "string",
+              "@value": ""
+            }
+          }
+        ],
+        "alert_conditions": [],
+        "matching_type": {
+          "@type": "string",
+          "@value": "AND"
+        },
+        "disabled": {
+          "@type": "boolean",
+          "@value": false
+        },
+        "description": {
+          "@type": "string",
+          "@value": "All messages from the NGINX syslog log input."
+        },
+        "default_stream": {
+          "@type": "boolean",
+          "@value": false
+        }
       },
       "constraints": [
         {
